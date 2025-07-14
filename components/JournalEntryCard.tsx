@@ -14,6 +14,11 @@ const JournalEntryCard: React.FC<JournalEntryCardProps> = ({ entry, onClick }) =
             <time className="font-medium text-sm">{entry.date}</time>
         </div>
         <h2 className="text-2xl font-bold text-gray-800">{entry.title}</h2>
+        <h2 className="text-md italic text-gray-500">{entry.blockquote}</h2>
+        <br />
+        <div className="flex items-end-safe text-gray-500 mb-2">
+            Created at {entry.created_at}
+        </div>
     </div>
 );
 

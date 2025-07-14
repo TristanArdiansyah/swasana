@@ -6,6 +6,14 @@ import JournalEntryCard from '@/components/JournalEntryCard';
 import BookView from '@/components/BookView';
 import EditorView from '@/components/EditorView';
 
+// Simple loading spinner component
+const LoadingSpinner: React.FC = () => (
+    <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-rose-400"></div>
+    </div>
+);
+
+
 const OurStoryPage: React.FC = () => {
     type View = 'LIST' | 'BOOK' | 'EDITOR';
 
@@ -13,6 +21,7 @@ const OurStoryPage: React.FC = () => {
     const [currentView, setCurrentView] = useState<View>('LIST');
     const [selectedEntry, setSelectedEntry] = useState<JournalEntryData | null>(null);
     const [editingEntry, setEditingEntry] = useState<Partial<JournalEntryData> | null>(null);
+    const [loading, setLoading] = useState(true); // <-- 1. Add loading state
 
     useEffect(() => {
         const fetchStories = async () => {
@@ -25,6 +34,8 @@ const OurStoryPage: React.FC = () => {
                 setJournalEntries(data);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setLoading(false); // <-- 2. Set loading to false after fetch completes
             }
         };
         fetchStories();
@@ -145,6 +156,15 @@ const OurStoryPage: React.FC = () => {
                 );
         }
     };
+    
+    // <-- 3. Conditionally render spinner or content
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-rose-50 to-sky-100 font-sans">
+                <LoadingSpinner />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-rose-50 to-sky-100 font-sans">

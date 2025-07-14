@@ -5,4 +5,5 @@ export interface JournalEntryData {
     content: string[];
     image?: string;
     blockquote?: string;
+    created_at?: string;
 }
