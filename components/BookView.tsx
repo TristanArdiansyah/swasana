@@ -27,7 +27,11 @@ const BookView: React.FC<BookViewProps> = ({ entry, onBack, onEdit, onDelete }) 
         </div>
         <div className="flex flex-col md:flex-row gap-8">
             <div className="md:w-1/2 flex-shrink-0">
-                <img src={entry.image} alt={entry.title} className="rounded-lg shadow-md w-full h-full object-cover" onError={(e) => { e.currentTarget.src = 'https://placehold.co/600x800/d1d5db/4b5563?text=Image+Not+Found'; }} />
+                <img
+                    src={entry.image && entry.image.trim() !== '' ? entry.image : 'https://placehold.co/600x800/d1d5db/4b5563?text=Image+Not+Found'}
+                    alt={entry.title}
+                    className="rounded-lg shadow-md w-full h-full object-cover"
+                />
             </div>
             <div className="md:w-1/2 prose prose-lg max-w-none text-gray-700">
                 <h1 className="text-4xl font-bold text-gray-800 mb-2">{entry.title}</h1>

@@ -11,17 +11,11 @@ async function getStories() {
 }
 
 // PUT (update) a story
-export async function PUT(request: Request) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    if (!id) {
-      return NextResponse.json({ message: 'Missing story ID' }, { status: 400 });
-    }
-
     const updatedStory = await request.json();
     const stories = await getStories();
-    const storyIndex = stories.findIndex((story: { id: number }) => story.id === parseInt(id, 10));
+    const storyIndex = stories.findIndex((story: { id: number }) => story.id === parseInt(params.id, 10));
 
     if (storyIndex === -1) {
       return NextResponse.json({ message: 'Story not found' }, { status: 404 });
@@ -32,31 +26,28 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ message: 'Story updated successfully', story: stories[storyIndex] });
   } catch (error) {
-    return NextResponse.json({ message: 'Error updating story', error }, { status: 500 });
+    console.error('PUT error:', error);
+    return NextResponse.json({ message: 'Error updating story' }, { status: 500 });
   }
 }
 
 // DELETE a story
-export async function DELETE(request: Request) {
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    if (!id) {
-      return NextResponse.json({ message: 'Missing story ID' }, { status: 400 });
-    }
-
-    let stories = await getStories();
-    const storyExists = stories.some((story: { id: number }) => story.id === parseInt(id, 10));
+    const stories = await getStories();
+    const idToDelete = parseInt(params.id, 10);
+    const storyExists = stories.some((story: { id: number }) => story.id === idToDelete);
 
     if (!storyExists) {
       return NextResponse.json({ message: 'Story not found' }, { status: 404 });
     }
 
-    const updatedStories = stories.filter((story: { id: number }) => story.id !== parseInt(id, 10));
+    const updatedStories = stories.filter((story: { id: number }) => story.id !== idToDelete);
     await fs.writeFile(storiesFilePath, JSON.stringify(updatedStories, null, 2));
 
     return NextResponse.json({ message: 'Story deleted successfully' });
   } catch (error) {
-    return NextResponse.json({ message: 'Error deleting story', error }, { status: 500 });
+    console.error('DELETE error:', error);
+    return NextResponse.json({ message: 'Error deleting story' }, { status: 500 });
   }
 }
